@@ -1,0 +1,1 @@
+web gunicorn productivityapp.wsgi:application --log-file -

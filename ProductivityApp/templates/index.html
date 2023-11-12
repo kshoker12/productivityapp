@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Coordinator Info</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+        <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Coordinator Info</a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
+                        <a class="btn btn-link" href="{% url 'pdf' %}">Add PDFs</a>
+                        <a class="btn btn-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Orders Completed
+                    </th>
+                    <th>
+                        Lines Completed
+                    </th>
+                    <th>
+                        Total Cost
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coordinator in coordinators %}
+                    <tr>
+                        <td>{{coordinator.id}}</td>
+                        <td>{{coordinator.name}}</td>
+                        <td>{{coordinator.orders_completed}}</td>
+                        <td>{{coordinator.lines_completed}}</td>
+                        <td>${{coordinator.total_cost}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>

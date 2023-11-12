@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        {% load static %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    </head>
+    <body>
+        <form action = "{% url 'login' %}" method="post" style = "outline: 2px solid black;">
+            {% csrf_token %}
+            <div class = "container">
+                <div>
+                    <h1>Login</h1>
+                </div>
+                <div>
+                    <label for="username"><b>User Name</b></label>
+                    <input type="text" placeholder="Enter User Name: " name="username" required>
+                </div>
+                <div>
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password: " name="psw" required>
+                </div>
+                <div>
+                    <button class="button" type="submit">Login</button>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>
