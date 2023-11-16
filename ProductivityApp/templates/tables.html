@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Add PDFs</title>
+        <title>View Tables</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -22,20 +22,19 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
-                        <a class="btn btn-link" href="{% url 'index' %}">Back</a>\
-                        <a class="btn btn-link" href="{% url 'tables' %}">View Tables</a>
-                        <a class="btn btn-link" href="{% url 'pdf' %}">Finish Week</a>
+                        <a class="btn btn-link" href="{% url 'index' %}">Back</a>
+                        <a class="btn btn-link" href="{% url 'pdf' %}">Add PDFs</a>
+                        <a class="btn btn-link" href="{% url 'reset' %}">Finish Week</a>
                         <a class="btn btn-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                 </ul>
             </div>
         </nav>
-        <form action='{% url 'pdf' %}' method='post' class='dropzone' id='my-dropzone' enctype='multipart/form-data' style = "height: 400px; margin: 20px"; display: flex; justify-content: center; align-items: center;>
-            {% csrf_token %}
-            <!-- <div class='fallback'>
-            </div> -->
-            <input type='hidden' name='pdf' id='pdf' accept='application/pdf'/>
-            <button type='submit' id='submit-btn'>Submit</button>
-        </form>
+        <div>
+            {%load static %}
+            <img src = "{% static 'images/lines_table.png' %}">
+            <img src = "{% static 'images/orders_table.png' %}">
+            <img src = "{%static 'images/cost_table.png'%}">
+        </div>
     </body>
 </html>
