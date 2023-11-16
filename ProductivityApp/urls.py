@@ -23,5 +23,7 @@ urlpatterns = [
     path("index/", view = views.get_coordinators, name = "index"),
     path("", view = views.login_request, name = "login"),
     path("pdf/", view = views.add_pdf, name = "pdf"),
+    path("tables/", view = views.tables, name = "tables"),
+    path("reset/", view = views.reset, name = "reset"),
     path('admin/', admin.site.urls),
 ]

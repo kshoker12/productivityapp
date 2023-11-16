@@ -18,10 +18,32 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">Coordinator Info</a>
                 </div>
+                <div>
+                    <form id="dropdown-form" method="post" action="{% url 'index' %}">
+                        {% csrf_token %}
+                        <select id = "dropdown" name="dropdown" onchange="submitForm()">
+                            {% for cw in currentWeeks %}
+                                {% if cw.week == activeWeek.week %}
+                                    {% if cw.selected %}
+                                        <option value = {{cw.week}} selected>Week {{cw.week}} (Current)</option>
+                                    {% else %}
+                                        <option value = {{cw.week}} selected>Week {{cw.week}}</option>
+                                    {% endif %}
+                                {% elif cw.selected %}
+                                    <option value = {{cw.week}}>Week {{cw.week}} (Current)</option>
+                                {% else %}
+                                    <option value = {{cw.week}}>Week {{cw.week}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </form>    
+                </div>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
                         <a class="btn btn-link" href="{% url 'pdf' %}">Add PDFs</a>
+                        <a class="btn btn-link" href="{% url 'tables' %}">View Tables</a>
+                        <a class="btn btn-link" href="{% url 'reset' %}">Finish Week</a>
                         <a class="btn btn-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                 </ul>
@@ -48,16 +70,21 @@
                 </tr>
             </thead>
             <tbody>
-                {% for coordinator in coordinators %}
+                {% for week in weeks %}
                     <tr>
-                        <td>{{coordinator.id}}</td>
-                        <td>{{coordinator.name}}</td>
-                        <td>{{coordinator.orders_completed}}</td>
-                        <td>{{coordinator.lines_completed}}</td>
-                        <td>${{coordinator.total_cost}}</td>
+                        <td>{{week.coordinator.id}}</td>
+                        <td>{{week.coordinator.name}}</td>
+                        <td>{{week.orders_completed}}</td>
+                        <td>{{week.lines_completed}}</td>
+                        <td>${{week.total_cost}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </body>
+    <script>
+        function submitForm() {
+            document.getElementById("dropdown-form").submit();
+        }
+    </script>
 </html>

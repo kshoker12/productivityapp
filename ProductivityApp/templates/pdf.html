@@ -22,7 +22,9 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
-                        <a class="btn btn-link" href="{% url 'index' %}">Back</a>
+                        <a class="btn btn-link" href="{% url 'index' %}">Back</a>\
+                        <a class="btn btn-link" href="{% url 'tables' %}">View Tables</a>
+                        <a class="btn btn-link" href="{% url 'pdf' %}">Finish Week</a>
                         <a class="btn btn-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                 </ul>
