@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import numpy as np
 from django.conf import settings
+import datetime
 
 def get_coordinators(request):
     if request.method == "GET":
@@ -24,64 +25,65 @@ def get_coordinators(request):
 
 def tables(request):
     if request.method == "GET":
-        fig, lx = plt.subplots()
-        fig1, ox = plt.subplots()
-        fig2, cx = plt.subplots()
-        lx_max = 0
-        ox_max = 0
-        cx_max = 0.00
-        colors = cm.viridis(np.linspace(0, 1, len(models.Coordinator.objects.all())))
-        i = 0
-        for cd in models.Coordinator.objects.all():
-            weeksObject = models.Week.objects.filter(coordinator__name = cd.name)
-            weeks = normalizeArray(weeksObject.values_list("week"))
-            lines = normalizeArray(weeksObject.values_list("lines_completed"))
-            cost = normalizeArray(weeksObject.values_list("total_cost"))
-            orders = normalizeArray(weeksObject.values_list("orders_completed"))
-            lx.scatter(weeks, lines, color = colors[i], label = weeksObject[0].coordinator.name)
-            ox.scatter(weeks, orders, color = colors[i], label = weeksObject[0].coordinator.name)
-            cx.scatter(weeks, cost, color = colors[i], label = weeksObject[0].coordinator.name)
-            lx.plot(weeks, lines, color = colors[i])
-            ox.plot(weeks, orders, color = colors[i])
-            cx.plot(weeks, cost, color = colors[i])
-            lx_max = calculateMax(lines, lx_max)
-            ox_max = calculateMax(orders, ox_max)
-            cx_max = calculateMax(cost, cx_max)
-            i+= 1
+        appstate = models.AppState.objects.all()[0]
+        if (appstate.update == True):
+            appstate.update = False
+            appstate.save()
+            fig, lx = plt.subplots(figsize = (10, 5))
+            fig1, ox = plt.subplots(figsize = (10, 5))
+            fig2, cx = plt.subplots(figsize = (10, 5))
+            lx_max = 0
+            ox_max = 0
+            cx_max = 0.00
+            colors = cm.viridis(np.linspace(0, 1, len(models.Coordinator.objects.all())))
+            i = 0
+            for cd in models.Coordinator.objects.all():
+                weeksObject = models.Week.objects.filter(coordinator__name = cd.name)
+                weeks = normalizeArray(weeksObject.values_list("week"))
+                lines = normalizeArray(weeksObject.values_list("lines_completed"))
+                cost = normalizeArray(weeksObject.values_list("total_cost"))
+                orders = normalizeArray(weeksObject.values_list("orders_completed"))
+                lx.scatter(weeks, lines, color = colors[i], label = weeksObject[0].coordinator.name)
+                ox.scatter(weeks, orders, color = colors[i], label = weeksObject[0].coordinator.name)
+                cx.scatter(weeks, cost, color = colors[i], label = weeksObject[0].coordinator.name)
+                lx.plot(weeks, lines, color = colors[i])
+                ox.plot(weeks, orders, color = colors[i])
+                cx.plot(weeks, cost, color = colors[i])
+                lx_max = calculateMax(lines, lx_max)
+                ox_max = calculateMax(orders, ox_max)
+                cx_max = calculateMax(cost, cx_max)
+                i+= 1
 
-        lx.set_xlabel('Weeks')
-        lx.set_ylabel('Lines Completed')
-        lx.set_title('Lines Completed per Week')
-        lx.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
-        lx.set_yticks(range(0, lx_max, 1))
+            lx.set_xlabel('Weeks')
+            lx.set_ylabel('Lines Completed')
+            lx.set_title('Lines Completed per Week')
+            lx.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
 
-        # Add legend
-        lx.legend()
-        file_path = settings.BASE_DIR
-        file_path_0 = os.path.join(file_path, "ProductivityApp/templates/static/images/lines_table.png")
-        fig.savefig(file_path_0)
+            # Add legend
+            lx.legend()
+            file_path = settings.BASE_DIR
+            file_path_0 = os.path.join(file_path, "ProductivityApp/templates/static/images/lines_table.png")
+            fig.savefig(file_path_0)
 
-        ox.set_xlabel('Weeks')
-        ox.set_ylabel('Orders Completed')
-        ox.set_title('Orders Completed per Week')
-        ox.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
-        ox.set_yticks(range(0, ox_max, 1))
+            ox.set_xlabel('Weeks')
+            ox.set_ylabel('Orders Completed')
+            ox.set_title('Orders Completed per Week')
+            ox.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
 
-        # Add legend
-        ox.legend()
-        file_path_1 = os.path.join(file_path, "ProductivityApp/templates/static/images/orders_table.png")
-        fig1.savefig(file_path_1)
+            # Add legend
+            ox.legend()
+            file_path_1 = os.path.join(file_path, "ProductivityApp/templates/static/images/orders_table.png")
+            fig1.savefig(file_path_1)
 
-        cx.set_xlabel('Weeks')
-        cx.set_ylabel('Orders Completed')
-        cx.set_title('Orders Completed per Week')
-        cx.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
-        cx.set_yticks(range(0, ox_max, 1))
+            cx.set_xlabel('Weeks')
+            cx.set_ylabel('Total Cost ($)')
+            cx.set_title('Total Cost ($) per Week')
+            cx.set_xticks(range(1, len(models.CurrentWeek.objects.all()) + 1, 1))
 
-        # Add legend
-        cx.legend()
-        file_path_2 = os.path.join(file_path, "ProductivityApp/templates/static/images/cost_table.png")
-        fig2.savefig(file_path_2)
+            # Add legend
+            cx.legend()
+            file_path_2 = os.path.join(file_path, "ProductivityApp/templates/static/images/cost_table.png")
+            fig2.savefig(file_path_2)
     return render(request, "tables.html", {})
 
 def reset(request):
@@ -93,9 +95,25 @@ def reset(request):
             for cd in models.Coordinator.objects.all():
                 weekObject = models.Week(coordinator = cd, week = len(models.CurrentWeek.objects.all()) + 1, lines_completed = 0, orders_completed = 0, total_cost = 0)
                 weekObject.save()
-            newWeek = models.CurrentWeek(week = len(models.CurrentWeek.objects.all()) + 1, selected = True)
+            date = datetime.date.today()
+            newWeek = models.CurrentWeek(week = len(models.CurrentWeek.objects.all()) + 1, name = date.strftime("%m-%d-%Y"), selected = True)
             newWeek.save()
     return redirect("index")
+
+def alltime(request):
+    if request.method == "GET":
+        toBeAdded = []
+        for cd in models.Coordinator.objects.all():
+            cd_weeks = models.Week.objects.filter(coordinator__name = cd.name).all()
+            lines = 0
+            cost = 0
+            orders = 0
+            for w in cd_weeks:
+                lines += w.lines_completed
+                cost += w.total_cost
+                orders += w.orders_completed
+            toBeAdded.append({"cd": cd, "lines": lines, "cost": cost, "orders": orders})
+    return render(request, "alltime.html", {"toBeAdded": toBeAdded})
 
 
 def login_request(request):
@@ -124,7 +142,12 @@ def add_pdf(request):
             return render(request, "pdf.html", context)
         if request.method == "POST":
             file = request.FILES.get("file")
-            if file != None:
+            if file != None and containsFile(file) == False:
+                newFile = models.Files(name = str(file))
+                newFile.save()
+                appstate = models.AppState.objects.all()[0]
+                appstate.update = True
+                appstate.save()
                 data = extract_data(file)
                 updateModels(data)
             return redirect("index")
@@ -146,6 +169,12 @@ def updateModels(data):
             week.orders_completed += 1
             week.total_cost += data["sales"]
             week.save()
+
+def containsFile(file):
+    for f in models.Files.objects.all():
+        if f.name == str(file):
+            return True
+    return False
 
 def extract_data(my_pdf):
     with pdfplumber.open(my_pdf) as pdf:

@@ -18,29 +18,29 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">Coordinator Info</a>
                 </div>
-                <div>
+                <!-- <div>
                     <form id="dropdown-form" method="post" action="{% url 'index' %}">
                         {% csrf_token %}
                         <select id = "dropdown" name="dropdown" onchange="submitForm()">
                             {% for cw in currentWeeks %}
                                 {% if cw.week == activeWeek.week %}
                                     {% if cw.selected %}
-                                        <option value = {{cw.week}} selected>{{cw.name}} (Current)</option>
+                                        <option value = {{cw.week}} selected>Week {{cw.week}} (Current)</option>
                                     {% else %}
-                                        <option value = {{cw.week}} selected>{{cw.name}}</option>
+                                        <option value = {{cw.week}} selected>Week {{cw.week}}</option>
                                     {% endif %}
                                 {% elif cw.selected %}
-                                    <option value = {{cw.week}}>{{cw.name}} (Current)</option>
+                                    <option value = {{cw.week}}>Week {{cw.week}} (Current)</option>
                                 {% else %}
-                                    <option value = {{cw.week}}>{{cw.name}}</option>
+                                    <option value = {{cw.week}}>Week {{cw.week}}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
                     </form>    
-                </div>
+                </div> -->
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class = "btn btn-link" href = "{% url 'alltime' %}">View All Time</a>
+                        <a class = "btn btn-link" href = "{% url 'index' %}">Back</a>
                         <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
                         <a class="btn btn-link" href="{% url 'pdf' %}">Add PDFs</a>
                         <a class="btn btn-link" href="{% url 'tables' %}">View Tables</a>
@@ -71,13 +71,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for week in weeks %}
+                {% for item in toBeAdded %}
                     <tr>
-                        <td>{{week.coordinator.id}}</td>
-                        <td>{{week.coordinator.name}}</td>
-                        <td>{{week.orders_completed}}</td>
-                        <td>{{week.lines_completed}}</td>
-                        <td>${{week.total_cost}}</td>
+                        <td>{{item.cd.id}}</td>
+                        <td>{{item.cd.name}}</td>
+                        <td>{{item.orders}}</td>
+                        <td>{{item.lines}}</td>
+                        <td>${{item.cost}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

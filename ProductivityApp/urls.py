@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
     path(route = 'logout/', view = views.logout_request, name='logout'),
+    path(route = "alltime", view = views.alltime, name = "alltime"),
     path("index/", view = views.get_coordinators, name = "index"),
     path("", view = views.login_request, name = "login"),
     path("pdf/", view = views.add_pdf, name = "pdf"),
