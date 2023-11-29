@@ -143,13 +143,13 @@ def add_pdf(request):
         if request.method == "POST":
             file = request.FILES.get("file")
             if file != None and containsFile(file) == False:
+                data = extract_data(file)
+                updateModels(data)
                 newFile = models.Files(name = str(file))
                 newFile.save()
                 appstate = models.AppState.objects.all()[0]
                 appstate.update = True
                 appstate.save()
-                data = extract_data(file)
-                updateModels(data)
             return redirect("index")
     else:
         return redirect("login")
@@ -174,24 +174,35 @@ def containsFile(file):
     for f in models.Files.objects.all():
         if f.name == str(file):
             return True
+    if "rev" in str(file) or "REV" in str(file):
+        return True
     return False
 
 def extract_data(my_pdf):
     with pdfplumber.open(my_pdf) as pdf:
-        page = pdf.pages[0]
-        text = page.extract_text()
-        sales_amount = Decimal(re.sub(r',',"",text.split('SalesAmount:')[1].split()[0]))
-        name = text.split('Page1of1')[1].split()[0]
-        lined_text = text.split("\n")
-        lines = []
-        lines.extend(lined_text)
-        start = obtainStartIndex(lines)
-        end = obtainEndIndex(lines)
-        table = lines[start:end]
-        number_of_lines = obtainLines(table)
-        return {"name": name, "sales": sales_amount, "lines": number_of_lines}
+        final_data = {"name": None, "sales": None, "lines": 0}
+        i = 0
+        for page in pdf.pages:
+            text = page.extract_text()
+            if i == len(pdf.pages) - 1:
+                sales_amount = Decimal(re.sub(r',',"",text.split('SalesAmount:')[1].split()[0]))
+                final_data["sales"] = sales_amount
+                name = text.split("\n")[-1].split(" ")[-1]
+                final_data["name"] = name
+            lined_text = text.split("\n")
+            lines = []
+            lines.extend(lined_text)
+            start = obtainStartIndex(lines)
+            if start != None:
+                end = obtainEndIndex(lines)
+                table = lines[start:end]
+                number_of_lines = obtainLines(table)
+                final_data["lines"] += number_of_lines
+            i+=1
+        return final_data
 
 def obtainLines(table):
+    print(table)
     current_string = table[0].split()[0]
     start = int(current_string)
     lines = 0

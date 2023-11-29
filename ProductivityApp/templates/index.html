@@ -36,12 +36,12 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
-                    </form>    
+                    </form>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a class = "btn btn-link" href = "{% url 'alltime' %}">View All Time</a>
-                        <a class="btn btn-link" href="#">Welcome {{ user.first_name }}({{ user.username }})</a>
+                        <a class="btn btn-link" href="#">Welcome ({{ user.first_name }})</a>
                         <a class="btn btn-link" href="{% url 'pdf' %}">Add PDFs</a>
                         <a class="btn btn-link" href="{% url 'tables' %}">View Tables</a>
                         <a class="btn btn-link" href="{% url 'reset' %}">Finish Week</a>
